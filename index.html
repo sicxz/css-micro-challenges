@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DESN368: 10 CSS Micro-Challenges</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --panel-bg: #1e293b;
+            --text-main: #e2e8f0;
+            --accent: #38bdf8;
+            --success: #4ade80;
+            --error: #f87171;
+
+
+​            /* Challenge Variables */
+​            --brand-pink: #ec4899; 
+​            --card-radius: 20px;
+​            --avatar-size: 80px;
+​        }
+
+​        body {
+​            font-family: 'Inter', sans-serif;
+​            background-color: var(--bg-dark);
+​            color: var(--text-main);
+​            padding-bottom: 100px;
+​        }
+
+​        .font-mono { font-family: 'Space Mono', monospace; }
+
+​        /* Sticky Progress Bar */
+​        .progress-bar-container {
+​            position: sticky;
+​            top: 0;
+​            z-index: 50;
+​            background: rgba(15, 23, 42, 0.95);
+​            backdrop-filter: blur(8px);
+​            border-bottom: 1px solid #334155;
+​            padding: 1rem;
+​        }
+
+​        /* Code Editor Simulation */
+​        .code-editor {
+​            background-color: #0d1117;
+​            border: 1px solid #30363d;
+​            border-radius: 6px;
+​            font-family: 'Space Mono', monospace;
+​            font-size: 14px;
+​            line-height: 1.6;
+​            position: relative;
+​            padding: 1rem;
+​        }
+​        
+​        .code-input {
+​            background: rgba(56, 189, 248, 0.1);
+​            border: none;
+​            border-bottom: 2px solid var(--accent);
+​            color: var(--accent);
+​            font-family: inherit;
+​            font-size: inherit;
+​            min-width: 50px;
+​            padding: 0 4px;
+​            outline: none;
+​            transition: all 0.2s;
+​        }
+​        .code-input:focus { background: rgba(56, 189, 248, 0.2); }
+​        .code-input.success { border-color: var(--success); color: var(--success); }
+​        .code-input.error { border-color: var(--error); color: var(--error); }
+
+​        /* Hints */
+​        .hint-box {
+​            max-height: 0;
+​            overflow: hidden;
+​            transition: all 0.3s ease-out;
+​            background: #334155;
+​            border-radius: 0 0 6px 6px;
+​            padding: 0 1rem; /* Default 0 vertical padding to ensure hidden */
+​            opacity: 0;
+​        }
+​        .hint-box.open { 
+​            max-height: 200px;
+​            padding: 0.75rem 1rem; /* Add padding when open */
+​            opacity: 1;
+​        }
+
+​        /* Challenge Card */
+​        .challenge-section {
+​            opacity: 0.5;
+​            transition: opacity 0.5s, border-left-color 0.3s;
+​            border-left: 4px solid transparent;
+​            padding-left: 1rem;
+​            filter: grayscale(0.8); /* Dim inactive challenges */
+​        }
+​        .challenge-section.active {
+​            opacity: 1;
+​            border-left-color: var(--accent);
+​            filter: grayscale(0);
+​        }
+​        .challenge-section.completed {
+​            opacity: 0.8;
+​            border-left-color: var(--success);
+​            filter: grayscale(0);
+​        }
+
+​        /* Live Preview Elements */
+​        .preview-box {
+​            background: #fff;
+​            border-radius: 8px;
+​            overflow: hidden;
+​            display: flex;
+​            align-items: center;
+​            justify-content: center;
+​            min-height: 200px;
+​            position: relative;
+​        }
+​        
+​        /* Specific Classes for JS manipulation */
+​        .target-btn { padding: 10px 20px; color: white; background: #64748b; border-radius: 4px; cursor: pointer; }
+​        .target-card { background: white; padding: 20px; border: 1px solid #e2e8f0; }
+​        .target-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+​        .target-video { width: 100%; height: 100%; object-fit: contain; }
+​        .target-nav { color: #64748b; font-weight: bold; cursor: pointer; }
+​        .target-heart { font-size: 3rem; color: #e2e8f0; cursor: pointer; transition: color 0.2s; }
+​        .target-heart:hover { color: #ec4899; }
+​    </style>
+</head>
+<body class="max-w-5xl mx-auto">
+
+​    <!-- Progress Bar -->
+
+    <div class="progress-bar-container flex justify-between items-center">
+        <div>
+            <h1 class="font-bold text-white text-lg">CSS Micro-Challenges</h1>
+            <div class="text-xs text-slate-400">Complete all 10 to level up</div>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="w-48 h-3 bg-slate-800 rounded-full overflow-hidden">
+                <div id="progress-fill" class="h-full bg-gradient-to-r from-sky-500 to-pink-500 w-0 transition-all duration-500"></div>
+            </div>
+            <span id="progress-text" class="font-mono text-sm text-sky-400">0/10</span>
+        </div>
+    </div>
+
+
+    <main class="p-4 space-y-24 mt-8">
+
+
+​        <!-- --- VARIABLES GROUP --- -->
+​        
+​        <!-- 1. BRAND COLOR -->
+
+        <section id="c1" class="challenge-section active grid md:grid-cols-2 gap-8">
+            <div class="space-y-4">
+                <h2 class="text-xl font-bold text-white"><span class="text-pink-500">01.</span> The Brand Button</h2>
+                <p class="text-slate-400 text-sm">
+                    We have a variable <code class="text-pink-400">--brand-pink</code> defined globally. 
+                    Update this boring grey button to use the brand color variable.
+                </p>
+
+
+                <div class="code-editor">
+                    <span class="text-slate-500">.btn {</span><br>
+                    &nbsp;&nbsp;background-color: <input type="text" id="in-1" class="code-input w-48" placeholder="var(...)" spellcheck="false">;<br>
+                    <span class="text-slate-500">}</span>
+                </div>
+
+​                <button onclick="toggleHint('h1')" class="text-xs text-slate-500 hover:text-sky-400 underline">Need a hint?</button>
+
+                <div id="h1" class="hint-box text-xs text-sky-200">
+                    Use the <code>var()</code> function. Syntax: <code>var(--variable-name)</code>
+                </div>
+
+​                <button onclick="check(1)" class="bg-sky-600 text-white px-4 py-2 rounded text-sm hover:bg-sky-500 w-full">Check Code</button>
+​            </div>
+
+            <div class="preview-box bg-slate-100">
+                <button id="out-1" class="target-btn">Click Me</button>
+            </div>
+
+​        </section>
+
+​        <!-- 2. CARD RADIUS -->
+
+        <section id="c2" class="challenge-section grid md:grid-cols-2 gap-8">
+            <div class="space-y-4">
+                <h2 class="text-xl font-bold text-white"><span class="text-pink-500">02.</span> Soften the Edges</h2>
+                <p class="text-slate-400 text-sm">
+                    Design wants consistent rounded corners. Use the variable <code class="text-pink-400">--card-radius</code> 
+                    to round the corners of this sharp card.
+                </p>
+
+
+                <div class="code-editor">
+                    <span class="text-slate-500">.card {</span><br>
+                    &nbsp;&nbsp;border-radius: <input type="text" id="in-2" class="code-input w-48" placeholder="..." spellcheck="false">;<br>
+                    <span class="text-slate-500">}</span>
+                </div>
+
+​                <button onclick="toggleHint('h2')" class="text-xs text-slate-500 hover:text-sky-400 underline">Need a hint?</button>
+
+                <div id="h2" class="hint-box text-xs text-sky-200">
+                    The property is <code>border-radius</code>. The variable is <code>--card-radius</code>.
+                </div>
+
+​                <button onclick="check(2)" class="bg-sky-600 text-white px-4 py-2 rounded text-sm hover:bg-sky-500 w-full">Check Code</button>
+​            </div>
+
+            <div class="preview-box bg-slate-200">
+                <div id="out-2" class="bg-white p-6 w-64 shadow-lg">
+                    <h3 class="font-bold text-slate-800">Hello World</h3>
+                    <p class="text-xs text-slate-500 mt-2">I am currently very sharp.</p>
+                </div>
+            </div>
+
+​        </section>
+
+​        <!-- 3. AVATAR SIZE -->
+
+        <section id="c3" class="challenge-section grid md:grid-cols-2 gap-8">
+            <div class="space-y-4">
+                <h2 class="text-xl font-bold text-white"><span class="text-pink-500">03.</span> Variable Size</h2>
+                <p class="text-slate-400 text-sm">
+                    This profile picture is too small. We have a variable <code class="text-pink-400">--avatar-size</code> (which is 80px).
+                    Apply it to <strong>both</strong> width and height.
+                </p>
+
+
+                <div class="code-editor">
+                    <span class="text-slate-500">.avatar {</span><br>
+                    &nbsp;&nbsp;width: <input type="text" id="in-3a" class="code-input w-32" placeholder="..." spellcheck="false">;<br>
+                    &nbsp;&nbsp;height: <input type="text" id="in-3b" class="code-input w-32" placeholder="..." spellcheck="false">;<br>
+                    <span class="text-slate-500">}</span>
+                </div>
+
+​                <button onclick="check(3)" class="bg-sky-600 text-white px-4 py-2 rounded text-sm hover:bg-sky-500 w-full">Check Code</button>
+​            </div>
+
+            <div class="preview-box bg-slate-100">
+                <img id="out-3" src="https://api.dicebear.com/9.x/avataaars/svg?seed=Felix" class="target-avatar shadow-md">
+            </div>
+
+​        </section>
+
+
+​        <!-- --- MEDIA GROUP --- -->
+
+​        <!-- 4. BACKGROUND VIDEO -->
+
+        <section id="c4" class="challenge-section grid md:grid-cols-2 gap-8 border-t border-slate-800 pt-8">
+            <div class="space-y-4">
+                <h2 class="text-xl font-bold text-white"><span class="text-sky-500">04.</span> The Background Video</h2>
+                <p class="text-slate-400 text-sm">
+                    We want this video to act like a background. It needs to play automatically, loop forever, and be silent.
+                </p>
+
+
+                <div class="code-editor">
+                    <span class="text-slate-500">&lt;video src="bg.mp4"</span><br>
+                    &nbsp;&nbsp;<input type="text" id="in-4" class="code-input w-full" placeholder="attributes..." spellcheck="false"><br>
+                    <span class="text-slate-500">&gt;&lt;/video&gt;</span>
+                </div>
+
+​                <button onclick="toggleHint('h4')" class="text-xs text-slate-500 hover:text-sky-400 underline">Need a hint?</button>
+
+                <div id="h4" class="hint-box text-xs text-sky-200">
+                    You need three words: <code>autoplay</code>, <code>loop</code>, and <code>muted</code>.
+                </div>
+
+​                <button onclick="check(4)" class="bg-sky-600 text-white px-4 py-2 rounded text-sm hover:bg-sky-500 w-full">Check Code</button>
+​            </div>
+
+            <div class="preview-box bg-black p-0">
+                <video id="out-4" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" class="w-full h-full object-cover opacity-50"></video>
+                <h1 class="absolute text-white font-bold text-2xl">HERO TITLE</h1>
+            </div>
+
+​        </section>
+
+​        <!-- 5. PODCAST PLAYER -->
+
+        <section id="c5" class="challenge-section grid md:grid-cols-2 gap-8">
+            <div class="space-y-4">
+                <h2 class="text-xl font-bold text-white"><span class="text-sky-500">05.</span> The Podcast Player</h2>
+                <p class="text-slate-400 text-sm">
+                    This audio file is invisible! Add the attribute to let users see the play/pause buttons.
+                </p>
+
+
+                <div class="code-editor">
+                    <span class="text-slate-500">&lt;audio src="pod.mp3"</span><br>
+                    &nbsp;&nbsp;<input type="text" id="in-5" class="code-input w-48" placeholder="attribute" spellcheck="false"><br>
+                    <span class="text-slate-500">&gt;&lt;/audio&gt;</span>
+                </div>
+
+​                <button onclick="check(5)" class="bg-sky-600 text-white px-4 py-2 rounded text-sm hover:bg-sky-500 w-full">Check Code</button>
+​            </div>
+
+            <div class="preview-box bg-slate-200">
+                <audio id="out-5" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+            </div>
+
+​        </section>
+
+​        <!-- 6. OBJECT FIT -->
+
+        <section id="c6" class="challenge-section grid md:grid-cols-2 gap-8">
+            <div class="space-y-4">
+                <h2 class="text-xl font-bold text-white"><span class="text-sky-500">06.</span> Fix the Squish</h2>
+                <p class="text-slate-400 text-sm">
+                    We forced this image into a square, and now it looks terrible. Use CSS to make it fill the box without distortion.
+                </p>
+
+
+                <div class="code-editor">
+                    <span class="text-slate-500">img {</span><br>
+                    &nbsp;&nbsp;width: 200px; height: 200px;<br>
+                    &nbsp;&nbsp;object-fit: <input type="text" id="in-6" class="code-input w-32" placeholder="..." spellcheck="false">;<br>
+                    <span class="text-slate-500">}</span>
+                </div>
+
+​                <button onclick="toggleHint('h6')" class="text-xs text-slate-500 hover:text-sky-400 underline">Need a hint?</button>
+
+                <div id="h6" class="hint-box text-xs text-sky-200">
+                    Try <code>cover</code> or <code>contain</code>. Which one fills the box?
+                </div>
+
+​                <button onclick="check(6)" class="bg-sky-600 text-white px-4 py-2 rounded text-sm hover:bg-sky-500 w-full">Check Code</button>
+​            </div>
+
+            <div class="preview-box bg-slate-100">
+                <img id="out-6" src="https://images.unsplash.com/photo-1535930749574-1399327ce78f?auto=format&fit=crop&w=400&q=80" class="w-[200px] h-[200px] border-4 border-slate-300">
+            </div>
+
+​        </section>
+
+
+​        <!-- --- MOTION GROUP --- -->
+
+​        <!-- 7. NAV LINK HOVER -->
+
+        <section id="c7" class="challenge-section grid md:grid-cols-2 gap-8 border-t border-slate-800 pt-8">
+            <div class="space-y-4">
+                <h2 class="text-xl font-bold text-white"><span class="text-purple-500">07.</span> Smooth Navigation</h2>
+                <p class="text-slate-400 text-sm">
+                    When hovering this link, the color snaps instantly. Add a <code class="text-purple-400">transition</code> to make it fade over 0.5 seconds.
+                </p>
+
+
+                <div class="code-editor">
+                    <span class="text-slate-500">a {</span><br>
+                    &nbsp;&nbsp;color: gray;<br>
+                    &nbsp;&nbsp;transition: <input type="text" id="in-7" class="code-input w-48" placeholder="..." spellcheck="false">;<br>
+                    <span class="text-slate-500">}</span>
+                </div>
+
+​                <button onclick="check(7)" class="bg-sky-600 text-white px-4 py-2 rounded text-sm hover:bg-sky-500 w-full">Check Code</button>
+​            </div>
+
+            <div class="preview-box bg-slate-900">
+                <a id="out-7" class="text-3xl font-bold text-slate-500 hover:text-white cursor-pointer">HOVER ME</a>
+            </div>
+
+​        </section>
+
+​        <!-- 8. LIKE BUTTON SCALE -->
+
+        <section id="c8" class="challenge-section grid md:grid-cols-2 gap-8">
+            <div class="space-y-4">
+                <h2 class="text-xl font-bold text-white"><span class="text-purple-500">08.</span> The Heartbeat</h2>
+                <p class="text-slate-400 text-sm">
+                    Make the heart grow bigger when hovered. Use <code class="text-purple-400">transform</code> to make it 1.2x size.
+                </p>
+
+
+                <div class="code-editor">
+                    <span class="text-slate-500">.heart:hover {</span><br>
+                    &nbsp;&nbsp;transform: <input type="text" id="in-8" class="code-input w-48" placeholder="..." spellcheck="false">;<br>
+                    <span class="text-slate-500">}</span>
+                </div>
+
+​                <button onclick="toggleHint('h8')" class="text-xs text-slate-500 hover:text-sky-400 underline">Need a hint?</button>
+
+                <div id="h8" class="hint-box text-xs text-sky-200">
+                    Use <code>scale()</code>. For example: <code>scale(1.5)</code>
+                </div>
+
+​                <button onclick="check(8)" class="bg-sky-600 text-white px-4 py-2 rounded text-sm hover:bg-sky-500 w-full">Check Code</button>
+​            </div>
+
+            <div class="preview-box bg-white">
+                <i id="out-8" class="fa-solid fa-heart target-heart transition-transform duration-300 text-red-200 hover:text-red-500 text-6xl"></i>
+            </div>
+
+​        </section>
+
+​        <!-- 9. REFRESH SPIN -->
+
+        <section id="c9" class="challenge-section grid md:grid-cols-2 gap-8">
+            <div class="space-y-4">
+                <h2 class="text-xl font-bold text-white"><span class="text-purple-500">09.</span> Spin to Refresh</h2>
+                <p class="text-slate-400 text-sm">
+                    Make the refresh icon spin 180 degrees when hovered.
+                </p>
+
+
+                <div class="code-editor">
+                    <span class="text-slate-500">.icon:hover {</span><br>
+                    &nbsp;&nbsp;transform: <input type="text" id="in-9" class="code-input w-48" placeholder="..." spellcheck="false">;<br>
+                    <span class="text-slate-500">}</span>
+                </div>
+
+​                <button onclick="check(9)" class="bg-sky-600 text-white px-4 py-2 rounded text-sm hover:bg-sky-500 w-full">Check Code</button>
+​            </div>
+
+            <div class="preview-box bg-slate-800">
+                <div id="out-9-container" class="p-4 bg-slate-700 rounded-full cursor-pointer hover:bg-slate-600 transition-colors group">
+                    <i id="out-9" class="fa-solid fa-arrows-rotate text-white text-3xl transition-transform duration-500"></i>
+                </div>
+            </div>
+
+​        </section>
+
+​        <!-- 10. SUBMIT BUTTON MOVE -->
+
+        <section id="c10" class="challenge-section grid md:grid-cols-2 gap-8">
+            <div class="space-y-4">
+                <h2 class="text-xl font-bold text-white"><span class="text-purple-500">10.</span> The Lift Off</h2>
+                <p class="text-slate-400 text-sm">
+                    Make this Submit button move UP by 5 pixels when hovered to create a 3D "lift" effect.
+                </p>
+
+
+                <div class="code-editor">
+                    <span class="text-slate-500">.btn:hover {</span><br>
+                    &nbsp;&nbsp;transform: <input type="text" id="in-10" class="code-input w-48" placeholder="..." spellcheck="false">;<br>
+                    <span class="text-slate-500">}</span>
+                </div>
+
+​                <button onclick="toggleHint('h10')" class="text-xs text-slate-500 hover:text-sky-400 underline">Need a hint?</button>
+
+                <div id="h10" class="hint-box text-xs text-sky-200">
+                    To move up, use a negative Y value: <code>translateY(-10px)</code>
+                </div>
+
+​                <button onclick="check(10)" class="bg-sky-600 text-white px-4 py-2 rounded text-sm hover:bg-sky-500 w-full">Check Code</button>
+​            </div>
+
+            <div class="preview-box bg-slate-200">
+                <button id="out-10" class="bg-indigo-600 text-white font-bold py-3 px-8 rounded shadow-lg transition-transform duration-200">
+                    SUBMIT
+                </button>
+            </div>
+
+​        </section>
+
+​    </main>
+
+    <script>
+        let progress = 0;
+        const total = 10;
+        const completed = new Set();
+
+
+​        function toggleHint(id) {
+​            document.getElementById(id).classList.toggle('open');
+​        }
+
+​        function updateProgress(id) {
+​            if (!completed.has(id)) {
+​                completed.add(id);
+​                progress++;
+​                const pct = (progress / total) * 100;
+​                document.getElementById('progress-fill').style.width = `${pct}%`;
+​                document.getElementById('progress-text').innerText = `${progress}/${total}`;
+​                
+​                // Highlight completion in UI
+​                const current = document.getElementById(`c${id}`);
+​                current.classList.add('completed');
+​                current.classList.remove('active');
+​                
+​                // Activate Next Section
+​                const nextId = id + 1;
+​                const next = document.getElementById(`c${nextId}`);
+​                if (next) {
+​                    next.classList.add('active');
+​                    // Scroll to next with a slight delay for effect
+​                    setTimeout(() => {
+​                        next.scrollIntoView({behavior: 'smooth', block: 'center'});
+​                    }, 500);
+​                }
+​            }
+​        }
+
+​        function check(id) {
+​            let valid = false;
+​            const inputA = document.getElementById(`in-${id}`)?.value.trim().toLowerCase() || "";
+​            // Handle cases with multiple inputs (like #3)
+​            const inputB = document.getElementById(`in-${id}b`)?.value.trim().toLowerCase() || "";
+​            const combined = inputA + " " + inputB;
+
+​            // Logic per challenge
+​            switch(id) {
+​                case 1: // Brand Color
+​                    valid = inputA.includes('var(--brand-pink)');
+​                    if(valid) document.getElementById('out-1').style.backgroundColor = '#ec4899';
+​                    break;
+​                case 2: // Radius
+​                    valid = inputA.includes('var(--card-radius)');
+​                    if(valid) document.getElementById('out-2').style.borderRadius = '20px';
+​                    break;
+​                case 3: // Avatar
+​                    valid = inputA.includes('var(--avatar-size)') && inputB.includes('var(--avatar-size)');
+​                    if(valid) {
+​                        const img = document.getElementById('out-3');
+​                        img.style.width = '80px'; img.style.height = '80px';
+​                    }
+​                    break;
+​                case 4: // Video
+​                    // Check if they have all 3 (order doesn't matter)
+​                    valid = combined.includes('autoplay') && combined.includes('loop') && combined.includes('muted');
+​                    if(valid) {
+​                        const v = document.getElementById('out-4');
+​                        v.muted = true; v.loop = true; v.play();
+​                    }
+​                    break;
+​                case 5: // Audio
+​                    valid = inputA.includes('controls');
+​                    if(valid) document.getElementById('out-5').controls = true;
+​                    break;
+​                case 6: // Object Fit
+​                    valid = inputA.includes('cover');
+​                    if(valid) document.getElementById('out-6').style.objectFit = 'cover';
+​                    break;
+​                case 7: // Transition
+​                    // Accepting various inputs like "color 0.5s" or "all 0.5s"
+​                    valid = (inputA.includes('0.5s') || inputA.includes('500ms'));
+​                    if(valid) document.getElementById('out-7').style.transition = 'color 0.5s';
+​                    break;
+​                case 8: // Scale
+​                    valid = inputA.includes('scale');
+​                    if(valid) {
+​                        // Simulate hover via class injection logic for demo
+​                        const heart = document.getElementById('out-8');
+​                        heart.onmouseenter = () => heart.style.transform = 'scale(1.2)';
+​                        heart.onmouseleave = () => heart.style.transform = 'scale(1)';
+​                    }
+​                    break;
+​                case 9: // Rotate
+​                    valid = inputA.includes('rotate');
+​                    if(valid) {
+​                        const icon = document.getElementById('out-9');
+​                        const container = document.getElementById('out-9-container');
+​                        container.onmouseenter = () => icon.style.transform = 'rotate(180deg)';
+​                        container.onmouseleave = () => icon.style.transform = 'rotate(0deg)';
+​                    }
+​                    break;
+​                case 10: // Translate
+​                    valid = inputA.includes('translatey');
+​                    if(valid) {
+​                        const btn = document.getElementById('out-10');
+​                        // Parse the value roughly or just apply a standard lift for demo
+​                        btn.onmouseenter = () => btn.style.transform = 'translateY(-5px)';
+​                        btn.onmouseleave = () => btn.style.transform = 'translateY(0)';
+​                    }
+​                    break;
+​            }
+
+​            // UI Feedback
+​            const inputs = document.querySelectorAll(`#c${id} .code-input`);
+​            inputs.forEach(i => {
+​                i.classList.remove('success', 'error');
+​                i.classList.add(valid ? 'success' : 'error');
+​            });
+
+​            if(valid) updateProgress(id);
+​        }
+​    </script>
+</body>
+</html>
